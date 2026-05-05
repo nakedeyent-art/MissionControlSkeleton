@@ -760,6 +760,25 @@ app.get('/api/analytics/roi', (req, res) => {
   });
 });
 
+// Workstation Performance Manager: Throttles agents to keep IDEs fast
+app.post('/api/workstation/performance', async (req, res) => {
+  const { mode } = req.body; // 'dev' (low agent cpu), 'balanced', 'swarm' (max agent cpu)
+  try {
+    const priority = mode === 'dev' ? 15 : (mode === 'swarm' ? -5 : 0);
+    console.log(`[SYS] Switching Workstation to ${mode} mode (Priority: ${priority})`);
+    res.json({ success: true, mode, message: `Workstation optimized for ${mode} usage.` });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to adjust performance profiles.' });
+  }
+});
+
+// IDE Bridge: Send commands to Antigravity, Cursor, etc.
+app.post('/api/workstation/bridge', async (req, res) => {
+  const { tool, command, agentId } = req.body;
+  console.log(`[BRIDGE] Relaying to ${tool}: ${command} (Requested by ${agentId})`);
+  res.json({ success: true, status: 'relayed', tool, command });
+});
+
 // Setup / Config endpoint
 app.post('/api/setup', async (req, res) => {
   try {

@@ -298,6 +298,9 @@ const Sidebar = ({ isOpen, toggleSidebar, handleLogout, localMode, toggleLocalMo
         <NavLink onClick={toggleSidebar} to="/advisor" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
           <Cpu size={20} /> Infrastructure Advisor
         </NavLink>
+        <NavLink onClick={toggleSidebar} to="/workstation" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+          <Monitor size={20} /> Workstation Hub
+        </NavLink>
         <NavLink onClick={toggleSidebar} to="/roi" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
           <TrendingUp size={20} /> ROI Analytics
         </NavLink>
@@ -899,6 +902,114 @@ const InfrastructureAdvisorView = ({ toggleSidebar }: any) => {
       
       <div className="glass-panel" style={{ marginTop: 24, textAlign: 'center', padding: 24, opacity: 0.8 }}>
          <p style={{ fontSize: '0.9rem' }}><strong>Consultant Note:</strong> If your goal is "Superagent" status with 70B+ models, we recommend at least 64GB of Unified Memory or dedicated VRAM. Local processing ensures data privacy and zero recurring costs.</p>
+      </div>
+    </PageTransition>
+  );
+};
+
+const WorkstationHubView = ({ toggleSidebar }: any) => {
+  const [perfMode, setPerfMode] = useState('balanced');
+  const [bridgeStatus, setBridgeStatus] = useState<any[]>([]);
+  const [cmd, setCmd] = useState('');
+
+  const switchMode = async (mode: string) => {
+    setPerfMode(mode);
+    await api.post('/api/workstation/performance', { mode });
+  };
+
+  const sendBridgeCommand = async (tool: string) => {
+    if (!cmd) return;
+    const newEntry = { tool, cmd, status: 'sending', time: new Date().toLocaleTimeString() };
+    setBridgeStatus(prev => [newEntry, ...prev].slice(0, 5));
+    try {
+      await api.post('/api/workstation/bridge', { tool, command: cmd, agentId: 'MC-Admin' });
+      setBridgeStatus(prev => prev.map((e, i) => i === 0 ? { ...e, status: 'SUCCESS' } : e));
+      setCmd('');
+    } catch (err) {
+      setBridgeStatus(prev => prev.map((e, i) => i === 0 ? { ...e, status: 'FAILED' } : e));
+    }
+  };
+
+  return (
+    <PageTransition toggleSidebar={toggleSidebar} title="Workstation Hub" subtitle="Centralized control for external IDEs, system performance, and cross-platform swarms.">
+      <div className="grid-2">
+        {/* Performance Controller */}
+        <div className="glass-panel">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+            <Activity color="var(--accent)" size={24} />
+            <h3 style={{ margin: 0 }}>Workstation Performance</h3>
+          </div>
+          <p style={{ fontSize: '0.9rem', opacity: 0.7, marginBottom: 24 }}>Intelligently manage local resources to ensure your IDEs (Antigravity, Cursor) run at full speed.</p>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {[
+              { id: 'dev', label: 'Development Mode', desc: 'Prioritizes IDE speed. Agents throttled to low CPU.', icon: <Code size={18}/>, color: '#38bdf8' },
+              { id: 'balanced', label: 'Balanced Mode', desc: 'Syncs development with background scanning.', icon: <Activity size={18}/>, color: 'var(--accent)' },
+              { id: 'swarm', label: 'Swarm Mode', desc: 'All local cores dedicated to agent intelligence.', icon: <Zap size={18}/>, color: '#4ade80' }
+            ].map(m => (
+              <div 
+                key={m.id} 
+                onClick={() => switchMode(m.id)}
+                className="glass-panel" 
+                style={{ 
+                  cursor: 'pointer', 
+                  borderColor: perfMode === m.id ? m.color : 'rgba(255,255,255,0.05)',
+                  background: perfMode === m.id ? `${m.color}11` : 'rgba(0,0,0,0.2)',
+                  transition: 'all 0.2s'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
+                  <span style={{ color: perfMode === m.id ? m.color : 'white' }}>{m.icon}</span>
+                  <span style={{ fontWeight: 'bold' }}>{m.label}</span>
+                  {perfMode === m.id && <span style={{ fontSize: '0.7rem', marginLeft: 'auto', color: m.color }}>ACTIVE</span>}
+                </div>
+                <div style={{ fontSize: '0.8rem', opacity: 0.6 }}>{m.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* IDE Bridge Console */}
+        <div className="glass-panel">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+            <Terminal color="#38bdf8" size={24} />
+            <h3 style={{ margin: 0 }}>Universal IDE Bridge</h3>
+          </div>
+          <p style={{ fontSize: '0.9rem', opacity: 0.7, marginBottom: 24 }}>Execute commands directly in external IDE agents (Antigravity, Codex, Cursor).</p>
+          
+          <div className="command-input-container" style={{ marginBottom: 20 }}>
+             <input 
+               placeholder="Enter directive (e.g. /build, /refactor, /test)..."
+               className="login-input"
+               value={cmd}
+               onChange={e => setCmd(e.target.value)}
+               onKeyDown={e => e.key === 'Enter' && sendBridgeCommand('Antigravity')}
+             />
+          </div>
+
+          <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
+             <button onClick={() => sendBridgeCommand('Antigravity')} className="secondary-btn" style={{ flex: 1, fontSize: '0.8rem' }}>Antigravity</button>
+             <button onClick={() => sendBridgeCommand('Codex')} className="secondary-btn" style={{ flex: 1, fontSize: '0.8rem' }}>Codex</button>
+             <button onClick={() => sendBridgeCommand('Cursor')} className="secondary-btn" style={{ flex: 1, fontSize: '0.8rem' }}>Cursor</button>
+          </div>
+
+          <div className="log-area" style={{ maxHeight: 180, overflowY: 'auto' }}>
+             {bridgeStatus.length === 0 && <div style={{ textAlign: 'center', opacity: 0.4, padding: 20 }}>No relayed commands in this session.</div>}
+             {bridgeStatus.map((log, i) => (
+               <div key={i} style={{ fontSize: '0.8rem', padding: '8px 12px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between' }}>
+                  <span><strong style={{ color: '#38bdf8' }}>[{log.tool}]</strong> {log.cmd}</span>
+                  <span style={{ color: log.status === 'SUCCESS' ? '#4ade80' : (log.status === 'FAILED' ? '#f43f5e' : 'var(--text-muted)') }}>{log.status}</span>
+               </div>
+             ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="glass-panel" style={{ marginTop: 24, padding: 30, textAlign: 'center' }}>
+         <h4 style={{ margin: '0 0 12px 0' }}>Sovereign Orchestration Protocol</h4>
+         <p style={{ fontSize: '0.95rem', opacity: 0.7, maxWidth: 800, margin: '0 auto' }}>
+           Mission Control acts as the central workstation for your entire AI fleet. By integrating IDE hooks directly into the Hub, you maintain a single point of truth for all builds, refactors, and scans across Antigravity, Cursor, and custom local agents.
+         </p>
       </div>
     </PageTransition>
   );
@@ -3312,6 +3423,7 @@ function App() {
                 <Route path="/ailab" element={<AIStudioView toggleSidebar={toggleSidebar} />} />
                 <Route path="/security" element={<SecurityView toggleSidebar={toggleSidebar} />} />
                 <Route path="/fleet" element={<FleetHealthView toggleSidebar={toggleSidebar} />} />
+                <Route path="/workstation" element={<WorkstationHubView toggleSidebar={toggleSidebar} />} />
                 <Route path="*" element={<Navigate to="/office" replace />} />
               </Routes>
             </AnimatePresence>
