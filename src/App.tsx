@@ -856,45 +856,44 @@ const InfrastructureAdvisorView = ({ toggleSidebar }: any) => {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: 24 }}>
         <div className="glass-panel" style={{ border: '1px solid rgba(74, 222, 128, 0.3)', display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-            <h3 style={{ color: '#4ade80', display: 'flex', alignItems: 'center', gap: 10 }}><Shield size={20}/> {profile?.recommendations?.free.title}</h3>
-            <span style={{ fontSize: '0.7rem', background: 'rgba(74, 222, 128, 0.1)', color: '#4ade80', padding: '4px 8px', borderRadius: 4 }}>FREE</span>
+            <h3 style={{ color: '#4ade80', display: 'flex', alignItems: 'center', gap: 10 }}><Shield size={20}/> Path of the Sovereign</h3>
+            <span style={{ fontSize: '0.7rem', background: 'rgba(74, 222, 128, 0.1)', color: '#4ade80', padding: '4px 8px', borderRadius: 4 }}>FREE / LOCAL</span>
           </div>
-          <p style={{ marginBottom: 20, fontSize: '0.95rem', flex: 1 }}>{profile?.recommendations?.free.description}</p>
-          <div style={{ background: 'rgba(0,0,0,0.3)', padding: 16, borderRadius: 8, marginBottom: 20 }}>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 4 }}>Recommended Local Model</div>
-            <div style={{ fontWeight: 'bold', color: 'var(--accent)' }}>{profile?.recommendations?.free.model}</div>
-          </div>
-          <ul style={{ listStyle: 'none', padding: 0, fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 24 }}>
-            {profile?.recommendations?.free.steps.map((s: string) => (
-              <li key={s} style={{ marginBottom: 8, display: 'flex', gap: 10 }}>
-                <CheckSquare size={14} color="#4ade80" /> {s}
-              </li>
+          
+          <div style={{ flex: 1 }}>
+            {profile?.recommendations?.freeOptions.map((opt: any) => (
+              <div key={opt.name} style={{ background: 'rgba(0,0,0,0.3)', padding: 16, borderRadius: 8, marginBottom: 12, border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                  <div style={{ fontWeight: 'bold', color: 'var(--accent)' }}>{opt.name}</div>
+                  <div style={{ fontSize: '0.7rem', color: '#4ade80' }}>{opt.model}</div>
+                </div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{opt.description}</div>
+              </div>
             ))}
-          </ul>
-          <button className="primary-btn" style={{ width: '100%', background: '#4ade80', color: '#000' }}>Begin Local Deployment</button>
+          </div>
+          
+          <button className="primary-btn" style={{ width: '100%', marginTop: 20, background: '#4ade80', color: '#000' }}>Deploy Local Cluster</button>
         </div>
 
         <div className="glass-panel" style={{ border: '1px solid rgba(56,189,248,0.3)', display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-            <h3 style={{ color: '#38bdf8', display: 'flex', alignItems: 'center', gap: 10 }}><Globe size={20}/> {profile?.recommendations?.paid.title}</h3>
-            <span style={{ fontSize: '0.7rem', background: 'rgba(56,189,248,0.1)', color: '#38bdf8', padding: '4px 8px', borderRadius: 4 }}>PAID</span>
-          </div>
-          <p style={{ marginBottom: 20, fontSize: '0.95rem', flex: 1 }}>{profile?.recommendations?.paid.description}</p>
-          
-          <div style={{ background: 'rgba(0,0,0,0.3)', padding: 16, borderRadius: 8, marginBottom: 20 }}>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 8 }}>Universal Key Support & Suggestions</div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, fontSize: '0.8rem' }}>
-              <div style={{ color: 'var(--text-main)' }}>• Google: <strong>Gemini 1.5 Pro</strong></div>
-              <div style={{ color: 'var(--text-main)' }}>• Kimi: <strong>Kimi-latest</strong></div>
-              <div style={{ color: 'var(--text-main)' }}>• Anthropic: <strong>Sonnet 3.5</strong></div>
-              <div style={{ color: 'var(--text-main)' }}>• Mistral: <strong>Mistral Large</strong></div>
-              <div style={{ color: 'var(--text-main)' }}>• OpenAI: <strong>GPT-4o</strong></div>
-              <div style={{ color: 'var(--text-main)' }}>• Groq: <strong>Llama 3 70B</strong></div>
-            </div>
+            <h3 style={{ color: '#38bdf8', display: 'flex', alignItems: 'center', gap: 10 }}><Globe size={20}/> Path of the Cloud</h3>
+            <span style={{ fontSize: '0.7rem', background: 'rgba(56,189,248,0.1)', color: '#38bdf8', padding: '4px 8px', borderRadius: 4 }}>PAID / API</span>
           </div>
           
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 24 }}>No hardware limits, maximum intelligence, pay only for what you use. Recommended for production swarms.</p>
-          <button className="secondary-btn" style={{ width: '100%' }}>Configure Universal APIs</button>
+          <div style={{ flex: 1 }}>
+            {profile?.recommendations?.paidOptions.map((opt: any) => (
+              <div key={opt.name} style={{ background: 'rgba(0,0,0,0.3)', padding: 16, borderRadius: 8, marginBottom: 12, border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                  <div style={{ fontWeight: 'bold', color: '#38bdf8' }}>{opt.name}</div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{opt.cost}</div>
+                </div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}><strong>{opt.model}:</strong> {opt.description}</div>
+              </div>
+            ))}
+          </div>
+          
+          <button className="secondary-btn" style={{ width: '100%', marginTop: 20 }}>Configure Cloud APIs</button>
         </div>
       </div>
       

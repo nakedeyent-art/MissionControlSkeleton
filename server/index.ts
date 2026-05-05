@@ -694,37 +694,36 @@ app.get('/api/infra/hardware-profile', async (req, res) => {
 });
 
 function generateRecommendations(tier: string, ram: number, isApple: boolean) {
-  const recs = {
-    free: {
-      title: "Path of the Sovereign (100% Free)",
-      description: "",
-      model: "",
-      steps: []
-    },
-    paid: {
-      title: "Path of the Cloud (High Speed)",
-      description: "Ideal for low-latency production with zero local maintenance.",
-      model: "GPT-4o / Gemini 1.5 Pro",
-      estimatedCost: "$15-30 / month"
-    }
+  const recommendations = {
+    freeOptions: [] as any[],
+    paidOptions: [
+      { name: "Speed King (Groq)", model: "Llama 3 70B", description: "Ultra-fast inference (800+ t/s). Perfect for real-time swarms.", cost: "Pay-as-you-go" },
+      { name: "Intelligence Lead (Anthropic)", model: "Claude 3.5 Sonnet", description: "The most capable model for complex coding and logic tasks.", cost: "~$15/mo usage" },
+      { name: "Context Giant (Google)", model: "Gemini 1.5 Pro", description: "Analyze massive document sets (2M context).", cost: "Free Tier Available" }
+    ]
   };
 
   if (tier === 'Extreme') {
-    recs.free.description = "Your machine is a beast. You can run 'Superagent' configurations entirely offline.";
-    recs.free.model = "Llama 3 70B (High Fidelity)";
-    recs.free.steps = ["Install Ollama", "Run 'ollama run llama3:70b'", "Zero token costs forever."];
+    recommendations.freeOptions = [
+      { name: "The Superagent", model: "Llama 3 70B", description: "Full reasoning power, zero latency, zero cost. Requires 64GB+ RAM." },
+      { name: "Balance Master", model: "Qwen 2 72B", description: "Exceptional coding and multilingual performance." },
+      { name: "Fast & Local", model: "Llama 3 8B", description: "Instantaneous responses for high-frequency scanning." }
+    ];
   } else if (tier === 'Pro') {
-    recs.free.description = "Strong performance. Perfect for local autonomous swarms.";
-    recs.free.model = "Mistral Nemo 12B / Llama 3 8B";
-    recs.free.steps = ["Install Ollama", "Run 'ollama run mistral-nemo'", "Handles 24/7 scanning efficiently."];
+    recommendations.freeOptions = [
+      { name: "The Workhorse", model: "Mistral Nemo 12B", description: "Superior logic to 8B models, fits perfectly in 16GB-32GB RAM." },
+      { name: "Standard Agent", model: "Llama 3 8B", description: "The industry standard for local small-scale orchestration." },
+      { name: "Efficient Brain", model: "Phi-3 Medium", description: "High intelligence-to-parameter ratio for power efficiency." }
+    ];
   } else {
-    recs.free.description = "Lightweight local capability. Better for simple logic.";
-    recs.free.model = "Phi-3 Mini / Llama 3 8B (Compressed)";
-    recs.free.steps = ["Install Ollama", "Run 'ollama run phi3'", "Limited context for complex swarms."];
-    recs.paid.description = "Highly recommended for your specs to ensure agent intelligence isn't throttled by hardware.";
+    recommendations.freeOptions = [
+      { name: "Light Scout", model: "Phi-3 Mini", description: "Fastest possible local setup for entry-level hardware." },
+      { name: "Compressed Core", model: "Gemma 2B", description: "Ultralight intelligence for basic background tasks." },
+      { name: "Cloud Hybrid", model: "Groq/OpenAI", description: "We recommend using API keys for your current specs." }
+    ];
   }
 
-  return recs;
+  return recommendations;
 }
 
 // Voice Commander: Speech-to-Text / Action Bridge
