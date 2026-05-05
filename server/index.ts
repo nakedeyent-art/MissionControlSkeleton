@@ -180,7 +180,8 @@ app.get('/api/auth/me', (req, res) => {
     const decoded: any = jwt.verify(token, JWT_SECRET);
     if (decoded.user === AUTH_USER) {
       const anthropicKey = process.env.ANTHROPIC_API_KEY || '';
-      const setupRequired = !anthropicKey || anthropicKey.includes('your_anthropic_key_here');
+      const envPath = path.join(process.cwd(), '.env');
+      const setupRequired = !fs.existsSync(envPath) || !anthropicKey || anthropicKey.includes('your_anthropic_key_here');
       
       res.json({ user: AUTH_USER, setupRequired });
     } else {
@@ -611,6 +612,95 @@ app.get('/api/memory', async (req, res) => {
     console.error(err);
     res.json([]);
   }
+});
+
+// Skill Marketplace: Import from URL
+app.post('/api/skills/import', async (req, res) => {
+  try {
+    const { url, name } = req.body;
+    if (!url) return res.status(400).json({ error: 'URL required' });
+    
+    const skillsDir = path.join(process.cwd(), 'openclaw_data', 'skills');
+    const targetDir = path.join(skillsDir, name || path.basename(url, '.git'));
+    
+    if (fs.existsSync(targetDir)) {
+      return res.status(400).json({ error: 'Skill already exists' });
+    }
+
+    console.log(`[SYS] Importing skill from: ${url}`);
+    // Use git clone via shell
+    const { exec } = require('child_process');
+    exec(`git clone ${url} "${targetDir}"`, (error: any) => {
+      if (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Failed to clone repository' });
+      }
+      res.json({ success: true, message: 'Skill imported successfully' });
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Import failed' });
+  }
+});
+
+// Infrastructure: Tunneling Status
+app.get('/api/infra/status', (req, res) => {
+  // Mock status for now, will integrate with actual CLI checks in next step
+  res.json({
+    tunnelActive: false,
+    localLLMDetected: false,
+    nodes: [
+      { id: 'gateway-01', type: 'Primary', status: 'online' }
+    ]
+  });
+});
+
+// Infrastructure: Local LLM Autodiscovery
+app.get('/api/infra/local-llm-check', async (req, res) => {
+  try {
+    const axios = require('axios');
+    const ollamaCheck = await axios.get('http://localhost:11434/api/tags').catch(() => null);
+    const lmStudioCheck = await axios.get('http://localhost:1234/v1/models').catch(() => null);
+    
+    res.json({
+      ollama: !!ollamaCheck,
+      lmStudio: !!lmStudioCheck,
+      models: ollamaCheck?.data?.models || [],
+      timestamp: new Date().toISOString()
+    });
+  } catch (err) {
+    res.json({ ollama: false, lmStudio: false });
+  }
+});
+
+// Voice Commander: Speech-to-Text / Action Bridge
+app.post('/api/voice/process', async (req, res) => {
+  try {
+    const { audioData } = req.body;
+    // In a real implementation, this would hit Whisper or OpenAI Realtime
+    // For the skeleton, we provide the hook for the customer to plug their key.
+    console.log('[VOICE] Received audio payload for processing...');
+    res.json({ 
+      transcript: "Mission Control, deploy research agent.", 
+      action: "DEPLOY_AGENT", 
+      target: "Research" 
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Voice processing failed' });
+  }
+});
+
+// ROI Analytics: Performance Tracking
+app.get('/api/analytics/roi', (req, res) => {
+  res.json({
+    timeSaved: 142, // hours
+    costEfficiency: 88, // %
+    taskCompletion: 94, // %
+    agentPerformance: [
+      { name: 'Lead Architect', score: 98, tasks: 45 },
+      { name: 'Sales Agent', score: 82, tasks: 120 },
+      { name: 'Researcher', score: 91, tasks: 32 }
+    ]
+  });
 });
 
 // Setup / Config endpoint

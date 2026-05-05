@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Navigate, useNavigate } from 'react-router-dom';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, HardDrive, FileText, Users, Building, Activity, Rocket, MessageSquare, Settings, Wrench, Clock, Cable, UploadCloud, Send, Mic, Cpu, CheckSquare, Shield, FolderOpen, Server, Layers, GitBranch, Radio, FlaskConical, Bot, UserCheck, User, Briefcase, LayoutDashboard, ListTodo, CircuitBoard, Network, Plus, Terminal, RefreshCw, RotateCcw, Save, Lock, ArrowLeft, Lightbulb } from 'lucide-react';
+import { Calendar, HardDrive, FileText, Users, Building, Activity, Rocket, MessageSquare, Settings, Wrench, Clock, Cable, UploadCloud, Send, Mic, Cpu, CheckSquare, Shield, FolderOpen, Server, Layers, GitBranch, Radio, FlaskConical, Bot, UserCheck, User, Briefcase, LayoutDashboard, ListTodo, CircuitBoard, Network, Plus, Terminal, RefreshCw, RotateCcw, Save, Lock, ArrowLeft, Lightbulb, TrendingUp, Globe } from 'lucide-react';
 
 import axios from 'axios';
 
@@ -275,6 +275,12 @@ const Sidebar = ({ isOpen, toggleSidebar, handleLogout, localMode, toggleLocalMo
         <NavLink onClick={toggleSidebar} to="/customization" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
           <Settings size={20} /> Customization
         </NavLink>
+        <NavLink onClick={toggleSidebar} to="/roi" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+          <TrendingUp size={20} /> ROI Analytics
+        </NavLink>
+        <NavLink onClick={toggleSidebar} to="/swarm" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+          <Network size={20} /> Swarm Builder
+        </NavLink>
       </nav>
 
       <div className="nav-section">Mode Control</div>
@@ -505,31 +511,41 @@ const ChatControlView = ({ toggleSidebar }: any) => {
   const [input, setInput] = useState('');
   const [selectedAgent, setSelectedAgent] = useState('Bergen (Director)');
   const [agents, setAgents] = useState<any[]>([]);
+  const [isRecording, setIsRecording] = useState(false);
 
   useEffect(() => {
     api.get('/api/agents').then(res => setAgents(res.data)).catch(console.error);
   }, []);
 
+  const handleVoiceToggle = () => {
+    setIsRecording(!isRecording);
+    if (!isRecording) {
+      console.log("Mic Active");
+    } else {
+      console.log("Processing Voice...");
+      api.post('/api/voice/process', { audioData: 'base64_blob' }).then(res => {
+        setInput(res.data.transcript);
+      });
+    }
+  };
+
   const handleSend = async (e: any) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     if (!input.trim()) return;
     
     const targetAgentName = selectedAgent.split(' ')[0].toLowerCase();
     const currentInput = input;
     
-    // Add user message to UI
     const newMsgs = [...messages, { role: 'user', agent: 'Admin', text: currentInput }];
     setMessages(newMsgs);
     setInput('');
     
     try {
-      // Send real command to backend
       const res = await api.post('/api/chat/message', {
         agentId: targetAgentName,
         message: currentInput
       });
 
-      // System feedback
       setMessages([...newMsgs, { 
         role: 'system', 
         agent: 'System', 
@@ -550,7 +566,6 @@ const ChatControlView = ({ toggleSidebar }: any) => {
     <PageTransition toggleSidebar={toggleSidebar} title="Command Console" subtitle="Direct terminal comms to active agents across the Gateway.">
       <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', height: '65vh', padding: 0, overflow: 'hidden' }}>
         
-        {/* Chat Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px', borderBottom: '1px solid var(--panel-border)', background: 'rgba(0,0,0,0.3)' }}>
            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
              <Cpu size={24} color="var(--accent)" />
@@ -566,15 +581,17 @@ const ChatControlView = ({ toggleSidebar }: any) => {
              </select>
            </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ padding: '4px 8px', borderRadius: 4, background: 'rgba(74, 222, 128, 0.1)', border: '1px solid #4ade80' }}>
-                <span style={{ fontSize: '0.7rem', color: '#4ade80', fontWeight: 'bold' }}>AGENT STATUS: </span>
-                <span style={{ fontSize: '0.7rem', color: 'white' }}>ACTIVE</span>
-              </div>
-              <div style={{ fontSize: '0.85rem', color: '#4ade80' }}>● SECURE TUNNEL</div>
+              <button 
+                onClick={handleVoiceToggle}
+                style={{ background: isRecording ? 'rgba(248,113,113,0.2)' : 'transparent', border: '1px solid ' + (isRecording ? '#f87171' : 'var(--panel-border)'), borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', color: isRecording ? '#f87171' : 'var(--text-muted)', cursor: 'pointer' }}
+                className={isRecording ? 'recording-pulse' : ''}
+              >
+                <Mic size={20} />
+              </button>
+              <div style={{ fontSize: '0.85rem', color: '#4ade80' }}>SECURE TUNNEL</div>
             </div>
         </div>
 
-        {/* Messages Layout */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
            {messages.map((msg, i) => (
              <div key={i} style={{ 
@@ -592,32 +609,119 @@ const ChatControlView = ({ toggleSidebar }: any) => {
                   borderRadius: '12px',
                   background: msg.role === 'user' ? 'var(--accent)' : (msg.role === 'system' ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.05)'),
                   color: msg.role === 'user' ? '#000' : 'var(--text-main)',
-                  border: msg.role === 'system' ? '1px dashed var(--accent)' : 'none',
-                  fontFamily: msg.role === 'system' ? 'monospace' : 'inherit'
+                  border: msg.role === 'system' ? '1px dashed var(--accent)' : '1px solid var(--panel-border)',
+                  fontSize: '0.95rem',
+                  lineHeight: '1.5'
                 }}>
-                   {msg.text}
+                  {msg.text}
                 </div>
              </div>
            ))}
         </div>
 
-        {/* Input Bar */}
-        <form onSubmit={handleSend} style={{ display: 'flex', padding: '16px', borderTop: '1px solid var(--panel-border)', background: 'rgba(0,0,0,0.2)', gap: '12px' }}>
-           <button type="button" style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'var(--text-muted)', borderRadius: '50%', width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-             <Mic size={20} />
-           </button>
-           <input 
-             type="text" 
-             value={input}
-             onChange={e => setInput(e.target.value)}
-             placeholder={`Send directive to ${selectedAgent.split(' ')[0]}...`}
-             style={{ flex: 1, background: 'rgba(0,0,0,0.4)', border: '1px solid var(--panel-border)', borderRadius: '24px', padding: '0 20px', color: 'white', fontSize: '1rem', outline: 'none' }}
-           />
-           <button type="submit" style={{ background: 'var(--accent)', border: 'none', color: '#000', borderRadius: '50%', width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-             <Send size={20} />
-           </button>
-        </form>
+        <div style={{ padding: '20px 24px', background: 'rgba(0,0,0,0.4)', borderTop: '1px solid var(--panel-border)' }}>
+          <form onSubmit={handleSend} style={{ display: 'flex', gap: 12 }}>
+            <input 
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              placeholder={`Enter directive for ${selectedAgent}...`}
+              style={{ flex: 1, background: 'rgba(0,0,0,0.5)', border: '1px solid var(--panel-border)', borderRadius: 8, padding: '12px 16px', color: 'white', outline: 'none' }}
+            />
+            <button type="submit" className="primary-btn" style={{ padding: '0 24px' }}>
+              <Send size={18} />
+            </button>
+          </form>
+        </div>
+      </div>
+    </PageTransition>
+  );
+};
 
+const ROIAnalyticsView = ({ toggleSidebar }: any) => {
+  const [data, setData] = useState<any>(null);
+
+  useEffect(() => {
+    api.get('/api/analytics/roi').then(res => setData(res.data)).catch(() => {});
+  }, []);
+
+  return (
+    <PageTransition toggleSidebar={toggleSidebar} title="Agent ROI Analytics" subtitle="Track performance, efficiency, and value generation across your fleet.">
+      <div className="analytics-grid">
+        <div className="glass-panel stat-card" style={{ padding: 24, textAlign: 'center' }}>
+          <div className="stat-label" style={{ color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: 1 }}>Total Time Saved</div>
+          <div className="stat-value" style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--accent)', margin: '10px 0' }}>{data?.timeSaved || 0}h</div>
+          <div className="stat-delta" style={{ color: '#4ade80', fontSize: '0.85rem' }}>+12% vs last week</div>
+        </div>
+        <div className="glass-panel stat-card" style={{ padding: 24, textAlign: 'center' }}>
+          <div className="stat-label" style={{ color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: 1 }}>Cost Efficiency</div>
+          <div className="stat-value" style={{ fontSize: '2.5rem', fontWeight: 800, color: '#38bdf8', margin: '10px 0' }}>{data?.costEfficiency || 0}%</div>
+          <div className="stat-delta" style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Local mode optimized</div>
+        </div>
+        <div className="glass-panel stat-card" style={{ padding: 24, textAlign: 'center' }}>
+          <div className="stat-label" style={{ color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: 1 }}>Task Completion</div>
+          <div className="stat-value" style={{ fontSize: '2.5rem', fontWeight: 800, color: '#facc15', margin: '10px 0' }}>{data?.taskCompletion || 0}%</div>
+          <div className="stat-delta" style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>High precision reliability</div>
+        </div>
+      </div>
+
+      <div className="glass-panel" style={{ marginTop: 24, padding: 24 }}>
+        <h3 style={{ marginBottom: 24, display: 'flex', alignItems: 'center', gap: 10 }}>
+           <TrendingUp size={20} color="var(--accent)" /> Agent Performance Ranking
+        </h3>
+        <div className="performance-list">
+          {data?.agentPerformance.map((a: any) => (
+            <div key={a.name} className="performance-item" style={{ display: 'flex', justifyContent: 'space-between', padding: '20px 0', borderBottom: '1px solid var(--panel-border)' }}>
+              <div>
+                <div style={{ fontWeight: '800', fontSize: '1.1rem' }}>{a.name}</div>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Autonomous Operative</div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ color: 'var(--accent)', fontWeight: 'bold', fontSize: '1.2rem' }}>{a.score} Pts</div>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{a.tasks} Tasks Finalized</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </PageTransition>
+  );
+};
+
+const SwarmBuilderView = ({ toggleSidebar }: any) => {
+  return (
+    <PageTransition toggleSidebar={toggleSidebar} title="Swarm Orchestrator" subtitle="Visual node-based builder for multi-agent autonomous pipelines.">
+      <div className="glass-panel swarm-canvas" style={{ height: 'calc(100vh - 250px)', position: 'relative', overflow: 'hidden', background: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '30px 30px' }}>
+        <div style={{ position: 'absolute', top: 20, right: 20, display: 'flex', gap: 12, zIndex: 10 }}>
+          <button className="primary-btn" style={{ padding: '10px 20px' }}><Plus size={16} /> Add Node</button>
+          <button className="secondary-btn" style={{ padding: '10px 20px' }}><Save size={16} /> Save Swarm</button>
+        </div>
+        
+        <div style={{ padding: 40, position: 'relative', height: '100%' }}>
+           <div className="swarm-node glass-panel" style={{ position: 'absolute', left: 100, top: 100, width: 200, padding: 16 }}>
+             <div className="node-header" style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--accent)', fontSize: '0.7rem', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: 8 }}>
+               <Bot size={14}/> Researcher
+             </div>
+             <div className="node-body" style={{ fontWeight: 'bold' }}>Market Analysis v2</div>
+             <div className="node-port" style={{ position: 'absolute', right: -8, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, borderRadius: '50%', background: 'var(--accent)', border: '4px solid #1a1a1a' }}></div>
+           </div>
+           
+           <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+             <path d="M 300 125 C 340 125, 340 125, 380 125" stroke="var(--accent)" strokeWidth="2" fill="none" strokeDasharray="5,5" />
+           </svg>
+
+           <div className="swarm-node glass-panel" style={{ position: 'absolute', left: 380, top: 100, width: 200, padding: 16 }}>
+             <div className="node-header" style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#38bdf8', fontSize: '0.7rem', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: 8 }}>
+               <Bot size={14}/> Content Lead
+             </div>
+             <div className="node-body" style={{ fontWeight: 'bold' }}>Strategy Generator</div>
+             <div className="node-port" style={{ position: 'absolute', left: -8, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, borderRadius: '50%', background: '#38bdf8', border: '4px solid #1a1a1a' }}></div>
+             <div className="node-port" style={{ position: 'absolute', right: -8, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, borderRadius: '50%', background: '#38bdf8', border: '4px solid #1a1a1a' }}></div>
+           </div>
+        </div>
+        
+        <div style={{ position: 'absolute', bottom: 20, left: '50%', transform: 'translateX(-50%)', color: 'var(--text-muted)', fontSize: '0.8rem', background: 'rgba(0,0,0,0.5)', padding: '6px 16px', borderRadius: 20, border: '1px solid var(--panel-border)' }}>
+          COMMAND HINT: Drag nodes to define operative intelligence flow.
+        </div>
       </div>
     </PageTransition>
   );
@@ -758,20 +862,61 @@ const SkillsHubView = ({ toggleSidebar }: any) => {
     }
   };
 
+  const [importUrl, setImportUrl] = useState('');
+  const [importing, setImporting] = useState(false);
+
+  const handleImport = async () => {
+    if (!importUrl) return;
+    setImporting(true);
+    try {
+      await api.post('/api/skills/import', { url: importUrl });
+      alert('Skill Imported! Refreshing Registry...');
+      setImportUrl('');
+      fetchSkills(selectedAgent);
+    } catch (err) {
+      alert('Import failed. Ensure the URL is a valid Git repository.');
+    } finally {
+      setImporting(false);
+    }
+  };
+
   return (
-    <PageTransition toggleSidebar={toggleSidebar} title="Skills Integration Hub" subtitle="Dynamically toggle capabilities across your deployed fleet.">
-      <div className="glass-panel" style={{ marginBottom: 24, display: 'flex', alignItems: 'center', gap: 16 }}>
-         <label style={{ color: 'var(--text-main)', fontWeight: 'bold' }}>Target Agent:</label>
-         <select 
-           value={selectedAgent} 
-           onChange={handleAgentChange}
-           style={{ padding: '10px 16px', background: 'rgba(0,0,0,0.5)', border: '1px solid var(--panel-border)', color: 'white', borderRadius: 8, flex: 1, outline: 'none' }}
-         >
-            <option value="global">Global (Bergen Main Core)</option>
-            {agents.filter(a => a._folder).map(a => (
-               <option key={a._folder} value={a._folder}>{a.name} ({a._folder})</option>
-            ))}
-         </select>
+    <PageTransition toggleSidebar={toggleSidebar} title="Skills Integration Hub" subtitle="Dynamically toggle and import capabilities across your fleet.">
+      <div style={{ display: 'flex', gap: 20, marginBottom: 24 }}>
+        <div className="glass-panel" style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 16 }}>
+           <label style={{ color: 'var(--text-main)', fontWeight: 'bold', whiteSpace: 'nowrap' }}>Target Agent:</label>
+           <select 
+             value={selectedAgent} 
+             onChange={handleAgentChange}
+             style={{ padding: '10px 16px', background: 'rgba(0,0,0,0.5)', border: '1px solid var(--panel-border)', color: 'white', borderRadius: 8, flex: 1, outline: 'none' }}
+           >
+              <option value="global">Global (Bergen Main Core)</option>
+              {agents.filter(a => a._folder).map(a => (
+                 <option key={a._folder} value={a._folder}>{a.name} ({a._folder})</option>
+              ))}
+           </select>
+        </div>
+
+        <div className="glass-panel" style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ position: 'relative', flex: 1 }}>
+            <Plus size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--accent)' }} />
+            <input 
+              placeholder="Git Repository URL..." 
+              style={{ width: '100%', padding: '10px 16px 10px 36px', background: 'rgba(0,0,0,0.5)', border: '1px solid var(--panel-border)', color: 'white', borderRadius: 8, outline: 'none' }}
+              value={importUrl} 
+              onChange={e => setImportUrl(e.target.value)}
+              onKeyPress={e => e.key === 'Enter' && handleImport()}
+            />
+          </div>
+          <button 
+            className="primary-btn" 
+            style={{ padding: '10px 20px' }}
+            onClick={handleImport} 
+            disabled={importing}
+          >
+            {importing ? 'IMPORTING...' : 'Import'}
+          </button>
+        </div>
       </div>
 
       <div className="skills-registry-grid">
@@ -3056,6 +3201,8 @@ function App() {
                 <Route path="/radar" element={<RadarView toggleSidebar={toggleSidebar} />} />
                 <Route path="/suggested" element={<SuggestedView toggleSidebar={toggleSidebar} />} />
                 <Route path="/ceo-desk" element={<CeoDeskView toggleSidebar={toggleSidebar} />} />
+                <Route path="/roi" element={<ROIAnalyticsView toggleSidebar={toggleSidebar} />} />
+                <Route path="/swarm" element={<SwarmBuilderView toggleSidebar={toggleSidebar} />} />
                 <Route path="/factory" element={<FactoryView toggleSidebar={toggleSidebar} />} />
                 <Route path="/content" element={<ContentStudioView toggleSidebar={toggleSidebar} />} />
                 <Route path="/dispatcher" element={<DispatcherView toggleSidebar={toggleSidebar} />} />
