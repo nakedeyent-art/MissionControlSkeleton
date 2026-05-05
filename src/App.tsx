@@ -144,6 +144,16 @@ const SetupWizard = ({ onComplete }: { onComplete: () => void }) => {
               <button className="secondary-btn" style={{ flex: 1 }} onClick={() => setStep(1)}>Back</button>
               <button className="login-btn" style={{ flex: 2 }} onClick={() => setStep(3)}>Next Step</button>
             </div>
+            <div style={{ marginTop: 20, textAlign: 'center' }}>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                Don't have API keys or want to run local models?
+              </p>
+              <button 
+                onClick={() => { window.location.href = '/advisor'; }}
+                style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '0.85rem', textDecoration: 'underline' }}>
+                Consult Infrastructure Advisor
+              </button>
+            </div>
           </div>
         )}
 
@@ -274,6 +284,9 @@ const Sidebar = ({ isOpen, toggleSidebar, handleLogout, localMode, toggleLocalMo
         </NavLink>
         <NavLink onClick={toggleSidebar} to="/customization" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
           <Settings size={20} /> Customization
+        </NavLink>
+        <NavLink onClick={toggleSidebar} to="/advisor" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+          <Cpu size={20} /> Infrastructure Advisor
         </NavLink>
         <NavLink onClick={toggleSidebar} to="/roi" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
           <TrendingUp size={20} /> ROI Analytics
@@ -797,6 +810,77 @@ const SettingsView = ({ toggleSidebar }: any) => {
              <span>Ag_Bridge Multi-Agent Orchestrator [ONLINE]</span>
           </div>
         </div>
+      </div>
+    </PageTransition>
+  );
+};
+
+const InfrastructureAdvisorView = ({ toggleSidebar }: any) => {
+  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.get('/api/infra/hardware-profile')
+      .then(res => setProfile(res.data))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return (
+    <PageTransition toggleSidebar={toggleSidebar} title="Infrastructure Advisor" subtitle="Analyzing your hardware architecture...">
+      <div className="glass-panel" style={{ padding: 100, textAlign: 'center' }}>
+        <RefreshCw className="recording-pulse" size={48} style={{ marginBottom: 20 }} />
+        <p>Probing CPU cycles and Memory capacity...</p>
+      </div>
+    </PageTransition>
+  );
+
+  return (
+    <PageTransition toggleSidebar={toggleSidebar} title="Infrastructure Advisor" subtitle="Optimized configuration strategies based on your local hardware specs.">
+      <div className="advisor-hero glass-panel" style={{ padding: 40, textAlign: 'center', marginBottom: 24, background: 'linear-gradient(135deg, rgba(56,189,248,0.1) 0%, rgba(168,85,247,0.1) 100%)' }}>
+        <Cpu size={64} color="var(--accent)" style={{ marginBottom: 20 }} />
+        <h2 style={{ fontSize: '2.5rem', marginBottom: 8 }}>System Profile: <span style={{ color: 'var(--accent)' }}>{profile?.tier} Tier</span></h2>
+        <p style={{ opacity: 0.6 }}>Detected: {profile?.cpu} ({profile?.cores} Cores) | {profile?.ram}GB RAM | {profile?.disk}GB Disk | {profile?.isAppleSilicon ? 'Apple Silicon' : 'Standard Architecture'}</p>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: 24 }}>
+        <div className="glass-panel" style={{ border: '1px solid rgba(74, 222, 128, 0.3)', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+            <h3 style={{ color: '#4ade80', display: 'flex', alignItems: 'center', gap: 10 }}><Shield size={20}/> {profile?.recommendations?.free.title}</h3>
+            <span style={{ fontSize: '0.7rem', background: 'rgba(74, 222, 128, 0.1)', color: '#4ade80', padding: '4px 8px', borderRadius: 4 }}>FREE</span>
+          </div>
+          <p style={{ marginBottom: 20, fontSize: '0.95rem', flex: 1 }}>{profile?.recommendations?.free.description}</p>
+          <div style={{ background: 'rgba(0,0,0,0.3)', padding: 16, borderRadius: 8, marginBottom: 20 }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 4 }}>Recommended Local Model</div>
+            <div style={{ fontWeight: 'bold', color: 'var(--accent)' }}>{profile?.recommendations?.free.model}</div>
+          </div>
+          <ul style={{ listStyle: 'none', padding: 0, fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 24 }}>
+            {profile?.recommendations?.free.steps.map((s: string) => (
+              <li key={s} style={{ marginBottom: 8, display: 'flex', gap: 10 }}>
+                <CheckSquare size={14} color="#4ade80" /> {s}
+              </li>
+            ))}
+          </ul>
+          <button className="primary-btn" style={{ width: '100%', background: '#4ade80', color: '#000' }}>Begin Local Deployment</button>
+        </div>
+
+        <div className="glass-panel" style={{ border: '1px solid rgba(56,189,248,0.3)', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+            <h3 style={{ color: '#38bdf8', display: 'flex', alignItems: 'center', gap: 10 }}><Globe size={20}/> {profile?.recommendations?.paid.title}</h3>
+            <span style={{ fontSize: '0.7rem', background: 'rgba(56,189,248,0.1)', color: '#38bdf8', padding: '4px 8px', borderRadius: 4 }}>PAID</span>
+          </div>
+          <p style={{ marginBottom: 20, fontSize: '0.95rem', flex: 1 }}>{profile?.recommendations?.paid.description}</p>
+          <div style={{ background: 'rgba(0,0,0,0.3)', padding: 16, borderRadius: 8, marginBottom: 20 }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 4 }}>Estimated Investment</div>
+            <div style={{ fontWeight: 'bold', color: '#38bdf8' }}>{profile?.recommendations?.paid.estimatedCost}</div>
+          </div>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 24 }}>Utilize Groq (Fastest), OpenAI, or Gemini APIs. No hardware limits, maximum intelligence, pay only for what you use.</p>
+          <button className="secondary-btn" style={{ width: '100%' }}>Connect Cloud APIs</button>
+        </div>
+      </div>
+      
+      <div className="glass-panel" style={{ marginTop: 24, textAlign: 'center', padding: 24, opacity: 0.8 }}>
+         <p style={{ fontSize: '0.9rem' }}><strong>Consultant Note:</strong> If your goal is "Superagent" status with 70B+ models, we recommend at least 64GB of Unified Memory or dedicated VRAM. Local processing ensures data privacy and zero recurring costs.</p>
       </div>
     </PageTransition>
   );
@@ -3201,6 +3285,7 @@ function App() {
                 <Route path="/radar" element={<RadarView toggleSidebar={toggleSidebar} />} />
                 <Route path="/suggested" element={<SuggestedView toggleSidebar={toggleSidebar} />} />
                 <Route path="/ceo-desk" element={<CeoDeskView toggleSidebar={toggleSidebar} />} />
+                <Route path="/advisor" element={<InfrastructureAdvisorView toggleSidebar={toggleSidebar} />} />
                 <Route path="/roi" element={<ROIAnalyticsView toggleSidebar={toggleSidebar} />} />
                 <Route path="/swarm" element={<SwarmBuilderView toggleSidebar={toggleSidebar} />} />
                 <Route path="/factory" element={<FactoryView toggleSidebar={toggleSidebar} />} />

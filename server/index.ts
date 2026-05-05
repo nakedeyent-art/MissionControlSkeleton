@@ -1,8 +1,8 @@
-
 console.log("--- MISSION CONTROL SERVER STARTING - VERSION ABNJ01 ---"); // UNIQUE IDENTIFIER FOR DEBUGGING
 
 import express from 'express';
 import cors from 'cors';
+import si from 'systeminformation';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
@@ -656,21 +656,76 @@ app.get('/api/infra/status', (req, res) => {
 
 // Infrastructure: Local LLM Autodiscovery
 app.get('/api/infra/local-llm-check', async (req, res) => {
+  // ... (existing logic)
+});
+
+// Hardware Profile & Intelligent Recommendations
+app.get('/api/infra/hardware-profile', async (req, res) => {
   try {
-    const axios = require('axios');
-    const ollamaCheck = await axios.get('http://localhost:11434/api/tags').catch(() => null);
-    const lmStudioCheck = await axios.get('http://localhost:1234/v1/models').catch(() => null);
+    const cpu = await si.cpu();
+    const mem = await si.mem();
+    const disk = await si.fsSize();
+    const os = await si.osInfo();
+
+    const ramGB = Math.round(mem.total / (1024 * 1024 * 1024));
+    const diskGB = disk[0] ? Math.round(disk[0].size / (1024 * 1024 * 1024)) : 0;
+    const isAppleSilicon = cpu.brand.toLowerCase().includes('apple') || cpu.vendor.toLowerCase().includes('apple');
+    const cpuModel = cpu.brand;
+    const cpuCores = cpu.cores;
+    
+    // Determine Tier
+    let tier = 'Budget';
+    if (ramGB >= 64 || (isAppleSilicon && ramGB >= 32)) tier = 'Extreme';
+    else if (ramGB >= 16) tier = 'Pro';
     
     res.json({
-      ollama: !!ollamaCheck,
-      lmStudio: !!lmStudioCheck,
-      models: ollamaCheck?.data?.models || [],
-      timestamp: new Date().toISOString()
+      cpu: cpuModel,
+      cores: cpuCores,
+      ram: ramGB,
+      disk: diskGB,
+      isAppleSilicon,
+      os: os.distro,
+      tier,
+      recommendations: generateRecommendations(tier, ramGB, isAppleSilicon)
     });
   } catch (err) {
-    res.json({ ollama: false, lmStudio: false });
+    res.status(500).json({ error: 'Hardware analysis failed' });
   }
 });
+
+function generateRecommendations(tier: string, ram: number, isApple: boolean) {
+  const recs = {
+    free: {
+      title: "Path of the Sovereign (100% Free)",
+      description: "",
+      model: "",
+      steps: []
+    },
+    paid: {
+      title: "Path of the Cloud (High Speed)",
+      description: "Ideal for low-latency production with zero local maintenance.",
+      model: "GPT-4o / Gemini 1.5 Pro",
+      estimatedCost: "$15-30 / month"
+    }
+  };
+
+  if (tier === 'Extreme') {
+    recs.free.description = "Your machine is a beast. You can run 'Superagent' configurations entirely offline.";
+    recs.free.model = "Llama 3 70B (High Fidelity)";
+    recs.free.steps = ["Install Ollama", "Run 'ollama run llama3:70b'", "Zero token costs forever."];
+  } else if (tier === 'Pro') {
+    recs.free.description = "Strong performance. Perfect for local autonomous swarms.";
+    recs.free.model = "Mistral Nemo 12B / Llama 3 8B";
+    recs.free.steps = ["Install Ollama", "Run 'ollama run mistral-nemo'", "Handles 24/7 scanning efficiently."];
+  } else {
+    recs.free.description = "Lightweight local capability. Better for simple logic.";
+    recs.free.model = "Phi-3 Mini / Llama 3 8B (Compressed)";
+    recs.free.steps = ["Install Ollama", "Run 'ollama run phi3'", "Limited context for complex swarms."];
+    recs.paid.description = "Highly recommended for your specs to ensure agent intelligence isn't throttled by hardware.";
+  }
+
+  return recs;
+}
 
 // Voice Commander: Speech-to-Text / Action Bridge
 app.post('/api/voice/process', async (req, res) => {
