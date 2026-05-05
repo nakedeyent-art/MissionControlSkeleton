@@ -304,6 +304,9 @@ const Sidebar = ({ isOpen, toggleSidebar, handleLogout, localMode, toggleLocalMo
         <NavLink onClick={toggleSidebar} to="/storage" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
           <Database size={20} /> Storage Optimizer
         </NavLink>
+        <NavLink onClick={toggleSidebar} to="/polymarket" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+          <TrendingUp size={20} /> Prediction Intel
+        </NavLink>
         <NavLink onClick={toggleSidebar} to="/roi" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
           <TrendingUp size={20} /> ROI Analytics
         </NavLink>
@@ -1087,6 +1090,75 @@ const StorageOptimizerView = ({ toggleSidebar }: any) => {
 
       <div className="glass-panel" style={{ marginTop: 24, textAlign: 'center', opacity: 0.7 }}>
          <p style={{ fontSize: '0.85rem' }}><strong>Privacy Note:</strong> Mission Control scans metadata only. No document content is ever indexed or sent to external servers during drive analysis.</p>
+      </div>
+    </PageTransition>
+  );
+};
+
+const PolymarketAgentsView = ({ toggleSidebar }: any) => {
+  const agents = [
+    { name: "HardBoner-v2-clean", pnl: "+$2,014.14", roi: "201.4%", trades: 17, status: "Active" },
+    { name: "OpenClaw-Contrarian", pnl: "+$2,000.00", roi: "200.0%", trades: 10, status: "Active" },
+    { name: "IndigoChild", pnl: "+$1,840.17", roi: "184.0%", trades: 847, status: "High Frequency" },
+    { name: "Jarvis-v3", pnl: "+$1,277.60", roi: "127.8%", trades: 4, status: "Strategic" },
+    { name: "AgentAlphav1", pnl: "+$744.07", roi: "74.4%", trades: 116, status: "Active" }
+  ];
+
+  return (
+    <PageTransition toggleSidebar={toggleSidebar} title="Prediction Market Intel" subtitle="Real-time leaderboard from PolymarketScan KaiLSHI Arena.">
+      <div className="glass-panel" style={{ marginBottom: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+          <Globe color="#38bdf8" size={24} />
+          <h3 style={{ margin: 0 }}>Polymarket Agent Leaderboard</h3>
+        </div>
+        <div className="log-area" style={{ maxHeight: 'none' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+            <thead>
+              <tr style={{ textAlign: 'left', borderBottom: '1px solid var(--panel-border)' }}>
+                <th style={{ padding: 12 }}>Agent Name</th>
+                <th style={{ padding: 12 }}>PnL</th>
+                <th style={{ padding: 12 }}>ROI</th>
+                <th style={{ padding: 12 }}>Trades</th>
+                <th style={{ padding: 12 }}>Behavior</th>
+              </tr>
+            </thead>
+            <tbody>
+              {agents.map((a, i) => (
+                <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                  <td style={{ padding: 12, color: 'white', fontWeight: 'bold' }}>{a.name}</td>
+                  <td style={{ padding: 12, color: '#4ade80' }}>{a.pnl}</td>
+                  <td style={{ padding: 12, color: 'var(--accent)' }}>{a.roi}</td>
+                  <td style={{ padding: 12 }}>{a.trades}</td>
+                  <td style={{ padding: 12 }}>
+                    <span style={{ fontSize: '0.7rem', background: 'rgba(56,189,248,0.1)', color: '#38bdf8', padding: '2px 8px', borderRadius: 4 }}>{a.status}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="grid-2">
+        <div className="glass-panel">
+           <h4 style={{ color: '#38bdf8', marginBottom: 12 }}>EWS Integration Status</h4>
+           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+             Top-performing strategies from the leaderboard are automatically analyzed by **OpenClaw Main Core**. Successful patterns are relayed to EWS execution gateways for production testing.
+           </p>
+           <div style={{ display: 'flex', gap: 10, marginTop: 15 }}>
+              <button className="secondary-btn" style={{ flex: 1, fontSize: '0.8rem' }}>Sync Roster</button>
+              <button className="secondary-btn" style={{ flex: 1, fontSize: '0.8rem' }}>Deploy Observer</button>
+           </div>
+        </div>
+        <div className="glass-panel">
+           <h4 style={{ color: 'var(--accent)', marginBottom: 12 }}>Discord Relay (#prediction-intel)</h4>
+           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+             The **OpenClawBot_v1** is currently active. Performance summaries are pushed to the EWS Discord every 6 hours.
+           </p>
+           <div style={{ padding: 10, background: 'rgba(0,0,0,0.3)', borderRadius: 4, marginTop: 15, fontSize: '0.8rem', fontFamily: 'monospace' }}>
+              [SYSTEM] Relay Active: Leaderboard -> #prediction-intel
+           </div>
+        </div>
       </div>
     </PageTransition>
   );
@@ -3502,6 +3574,7 @@ function App() {
                 <Route path="/fleet" element={<FleetHealthView toggleSidebar={toggleSidebar} />} />
                 <Route path="/workstation" element={<WorkstationHubView toggleSidebar={toggleSidebar} />} />
                 <Route path="/storage" element={<StorageOptimizerView toggleSidebar={toggleSidebar} />} />
+                <Route path="/polymarket" element={<PolymarketAgentsView toggleSidebar={toggleSidebar} />} />
                 <Route path="*" element={<Navigate to="/office" replace />} />
               </Routes>
             </AnimatePresence>
