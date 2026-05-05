@@ -55,6 +55,10 @@ const SetupWizard = ({ onComplete }: { onComplete: () => void }) => {
     AUTH_PASS: 'admin123',
     ANTHROPIC_API_KEY: '',
     OPENAI_API_KEY: '',
+    GOOGLE_API_KEY: '',
+    GROQ_API_KEY: '',
+    KIMI_API_KEY: '',
+    MISTRAL_API_KEY: '',
     ELEVENLABS_API_KEY: '',
     TWELVE_DATA_API_KEY: ''
   });
@@ -120,33 +124,39 @@ const SetupWizard = ({ onComplete }: { onComplete: () => void }) => {
         )}
 
         {step === 2 && (
-          <div className="setup-step">
+          <div className="setup-step" style={{ maxHeight: '60vh', overflowY: 'auto', paddingRight: 10 }}>
             <h3 style={{ fontSize: '1rem', marginBottom: 20, color: 'var(--accent)' }}>02. Intelligence Keys</h3>
-            <div className="form-group">
-              <label className="login-label">Anthropic API Key</label>
-              <input 
-                placeholder="sk-ant-..."
-                className="login-input" 
-                value={config.ANTHROPIC_API_KEY} 
-                onChange={e => setConfig({...config, ANTHROPIC_API_KEY: e.target.value})} 
-              />
-            </div>
-            <div className="form-group" style={{ marginTop: 16 }}>
-              <label className="login-label">OpenAI API Key (Optional)</label>
-              <input 
-                placeholder="sk-..."
-                className="login-input" 
-                value={config.OPENAI_API_KEY} 
-                onChange={e => setConfig({...config, OPENAI_API_KEY: e.target.value})} 
-              />
-            </div>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: 20 }}>Mission Control supports universal providers. Provide at least one key to power your agents.</p>
+            
+            {[
+              { key: 'ANTHROPIC_API_KEY', label: 'Anthropic / Claude', placeholder: 'sk-ant-...', best: 'Claude 3.5 Sonnet' },
+              { key: 'GOOGLE_API_KEY', label: 'Google AI Studio', placeholder: 'AIza...', best: 'Gemini 1.5 Pro' },
+              { key: 'KIMI_API_KEY', label: 'Kimi (Moonshot)', placeholder: 'km-...', best: 'Kimi-latest' },
+              { key: 'OPENAI_API_KEY', label: 'OpenAI', placeholder: 'sk-...', best: 'GPT-4o' },
+              { key: 'GROQ_API_KEY', label: 'Groq', placeholder: 'gsk_...', best: 'Llama 3 70B' },
+              { key: 'MISTRAL_API_KEY', label: 'Mistral AI', placeholder: '...', best: 'Mistral Large' },
+            ].map(p => (
+              <div className="form-group" style={{ marginBottom: 16 }} key={p.key}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <label className="login-label">{p.label}</label>
+                  <span style={{ fontSize: '0.65rem', color: 'var(--accent)', opacity: 0.8 }}>Best: {p.best}</span>
+                </div>
+                <input 
+                  placeholder={p.placeholder}
+                  className="login-input" 
+                  value={(config as any)[p.key]} 
+                  onChange={e => setConfig({...config, [p.key]: e.target.value})} 
+                />
+              </div>
+            ))}
+
             <div style={{ display: 'flex', gap: 12, marginTop: 30 }}>
               <button className="secondary-btn" style={{ flex: 1 }} onClick={() => setStep(1)}>Back</button>
               <button className="login-btn" style={{ flex: 2 }} onClick={() => setStep(3)}>Next Step</button>
             </div>
-            <div style={{ marginTop: 20, textAlign: 'center' }}>
+            <div style={{ marginTop: 20, textAlign: 'center', paddingBottom: 10 }}>
               <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                Don't have API keys or want to run local models?
+                Want to run free local models like Llama 3 70B?
               </p>
               <button 
                 onClick={() => { window.location.href = '/advisor'; }}
@@ -870,12 +880,21 @@ const InfrastructureAdvisorView = ({ toggleSidebar }: any) => {
             <span style={{ fontSize: '0.7rem', background: 'rgba(56,189,248,0.1)', color: '#38bdf8', padding: '4px 8px', borderRadius: 4 }}>PAID</span>
           </div>
           <p style={{ marginBottom: 20, fontSize: '0.95rem', flex: 1 }}>{profile?.recommendations?.paid.description}</p>
+          
           <div style={{ background: 'rgba(0,0,0,0.3)', padding: 16, borderRadius: 8, marginBottom: 20 }}>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 4 }}>Estimated Investment</div>
-            <div style={{ fontWeight: 'bold', color: '#38bdf8' }}>{profile?.recommendations?.paid.estimatedCost}</div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 8 }}>Universal Key Support & Suggestions</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, fontSize: '0.8rem' }}>
+              <div style={{ color: 'var(--text-main)' }}>• Google: <strong>Gemini 1.5 Pro</strong></div>
+              <div style={{ color: 'var(--text-main)' }}>• Kimi: <strong>Kimi-latest</strong></div>
+              <div style={{ color: 'var(--text-main)' }}>• Anthropic: <strong>Sonnet 3.5</strong></div>
+              <div style={{ color: 'var(--text-main)' }}>• Mistral: <strong>Mistral Large</strong></div>
+              <div style={{ color: 'var(--text-main)' }}>• OpenAI: <strong>GPT-4o</strong></div>
+              <div style={{ color: 'var(--text-main)' }}>• Groq: <strong>Llama 3 70B</strong></div>
+            </div>
           </div>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 24 }}>Utilize Groq (Fastest), OpenAI, or Gemini APIs. No hardware limits, maximum intelligence, pay only for what you use.</p>
-          <button className="secondary-btn" style={{ width: '100%' }}>Connect Cloud APIs</button>
+          
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 24 }}>No hardware limits, maximum intelligence, pay only for what you use. Recommended for production swarms.</p>
+          <button className="secondary-btn" style={{ width: '100%' }}>Configure Universal APIs</button>
         </div>
       </div>
       
