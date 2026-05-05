@@ -1,0 +1,13 @@
+[Unit]
+Description=Mission Control Provider Bridge
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/absolute/path/to/missioncontrol/bridge
+ExecStart=/usr/bin/python3 /absolute/path/to/missioncontrol/bridge/bridge.py
+Restart=always
+Environment=BRIDGE_CONFIG=/absolute/path/to/missioncontrol/bridge/config.json
+
+[Install]
+WantedBy=multi-user.target

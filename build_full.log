@@ -1,0 +1,16 @@
+
+> missioncontrolhub@0.0.0 build
+> tsc -b && vite build
+
+src/App.tsx(203,9): error TS17002: Expected corresponding JSX closing tag for 'aside'.
+src/App.tsx(204,7): error TS17015: Expected corresponding closing tag for JSX fragment.
+src/App.tsx(204,12): error TS1005: ',' expected.
+src/App.tsx(205,3): error TS1109: Expression expected.
+src/App.tsx(205,5): error TS1109: Expression expected.
+src/App.tsx(206,1): error TS1109: Expression expected.
+src/App_temp.tsx(203,9): error TS17002: Expected corresponding JSX closing tag for 'aside'.
+src/App_temp.tsx(204,7): error TS17015: Expected corresponding closing tag for JSX fragment.
+src/App_temp.tsx(204,12): error TS1005: ',' expected.
+src/App_temp.tsx(205,3): error TS1109: Expression expected.
+src/App_temp.tsx(205,5): error TS1109: Expression expected.
+src/App_temp.tsx(206,1): error TS1109: Expression expected.

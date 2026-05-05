@@ -1,0 +1,22 @@
+{
+  "api_base": "http://127.0.0.1:18789",
+  "token": "mc_bridge_secret_9981",
+  "interval_seconds": 300,
+  "working_dir": "/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/bridge",
+  "collector_commands": [
+    "bash collectors/generate_files_macos.sh"
+  ],
+  "ics_sources": [],
+  "graph": {
+    "tenant_id": "",
+    "client_id": "",
+    "client_secret": "",
+    "user_principal": "",
+    "days_ahead": 30
+  },
+  "providers": [
+    { "name": "calendar", "path": "calendar.json" },
+    { "name": "reminders", "path": "reminders.json" },
+    { "name": "files", "path": "files.json" }
+  ]
+}

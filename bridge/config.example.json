@@ -1,0 +1,33 @@
+{
+  "api_base": "http://127.0.0.1:3001",
+  "token": "CHANGE_ME",
+  "interval_seconds": 60,
+  "working_dir": "/absolute/path/to/missioncontrol/bridge",
+  "collector_commands": [
+    "python3 collectors/fetch_ics.py --config config.json --mode all",
+    "python3 collectors/graph_calendar.py --config config.json",
+    "python3 collectors/generate_files_linux.py"
+  ],
+  "ics_sources": [
+    {
+      "url": "https://example.com/calendar.ics",
+      "target": "calendar"
+    },
+    {
+      "url": "https://example.com/tasks.ics",
+      "target": "reminders"
+    }
+  ],
+  "graph": {
+    "tenant_id": "YOUR_TENANT_ID",
+    "client_id": "YOUR_CLIENT_ID",
+    "client_secret": "YOUR_CLIENT_SECRET",
+    "user_principal": "st@nak3deye.com",
+    "days_ahead": 30
+  },
+  "providers": [
+    { "name": "calendar", "path": "/absolute/path/to/calendar.json" },
+    { "name": "reminders", "path": "/absolute/path/to/reminders.json" },
+    { "name": "files", "path": "/absolute/path/to/files.json" }
+  ]
+}

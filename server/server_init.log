@@ -1,0 +1,153 @@
+
+> server@1.0.0 dev
+> tsx watch index.ts
+
+--- MISSION CONTROL SERVER STARTING - VERSION ABNJ01 ---
+◇ injecting env (9) from .env // tip: ⌘ enable debugging { debug: true }
+Mission Control backend running on port 18788
+⚙️ Booting Mission Control Cron Engine...
+[CRON] Attempting to schedule job arbitrage-scanner (Arbitrage Scanner) with expr: 0 */15 6-16 * * 1-5
+[CRON] Attempting to schedule job shorts-bids-scanner (Short-Bids Scanner) with expr: 0 */5 9-16 * * 1-5
+[CRON] Attempting to schedule job long-bids-scanner (Long-Bids Scanner) with expr: 0 0 7-19 * * 1-5
+[CRON] Attempting to schedule job options-scanner (Options Trading Scanner) with expr: 0 0 9-16 * * 1-5
+[CRON] Attempting to schedule job suggested-sportsbets-scanner (Suggested Sports Bets Scanner) with expr: 0 */20 * * * *
+[CRON] Attempting to schedule job suggested-politics-scanner (Suggested Politics Scanner) with expr: 0 */20 * * * *
+[CRON] Attempting to schedule job suggested-stock-puts-scanner (Suggested Stock Puts Scanner) with expr: 0 */20 9-16 * * 1-5
+[CRON] Attempting to schedule job suggested-stock-calls-scanner (Suggested Stock Calls Scanner) with expr: 0 */20 9-16 * * 1-5
+[CRON] Attempting to schedule job trade-auditor (Trade Performance Auditor) with expr: 0 0 17 * * 1-5
+[CRON] Attempting to schedule job sentiment-monitor (Market Sentiment Monitor) with expr: 0 0 */2 * * *
+[CRON] Attempting to schedule job quick-flips-scanner (Quick Flips Scanner) with expr: 0 0 8,9,12,15 * * 1-5
+[CRON] Attempting to schedule job nyse-research (NYSE Deep-Research Analyst) with expr: 0 45 9,16 * * 1-5
+[CRON] Attempting to schedule job crypto-research (Cryptocurrency Research Analyst) with expr: 0 */4 * * * *
+[CRON] Attempting to schedule job forex-research (Forex Research Analyst) with expr: 0 */30 * * * 1-5
+[CRON] Attempting to schedule job prediction-research (Prediction Market Research) with expr: 0 */4 * * * *
+[CRON] Attempting to schedule job breaking-news (Breaking Finance News) with expr: 0 */4 * * * *
+[CRON] Attempting to schedule job nyse-news (NYSE Breaking Intelligence) with expr: 0 */4 * * * *
+[CRON] Attempting to schedule job forex-news (Forex Breaking Intelligence) with expr: 0 */4 * * * *
+[CRON] Attempting to schedule job crypto-news (Crypto Breaking Intelligence) with expr: 0 */4 * * * *
+[CRON] Attempting to schedule job prediction-news (Prediction Market Intelligence) with expr: 0 */4 * * * *
+[CRON] Attempting to schedule job suggested-predictions-scanner (Suggested Predictions Scanner) with expr: 0 */20 * * * *
+[CRON] Attempting to schedule job polymarket-sports-scanner (Polymarket Sports Tier) with expr: 0 */15 * * * *
+[CRON] Attempting to schedule job instagram-news-intel (Instagram News & Intel Scanner) with expr: 0 */30 * * * *
+[CRON] Attempting to schedule job player-points-scanner (Player Points Prop Scanner) with expr: 0 */20 * * * *
+[CRON] Attempting to schedule job player-assists-scanner (Player Assists Prop Scanner) with expr: 0 */20 * * * *
+[CRON] Attempting to schedule job player-steals-scanner (Player Steals Prop Scanner) with expr: 0 */20 * * * *
+[CRON] Attempting to schedule job player-blocks-scanner (Player Blocks Prop Scanner) with expr: 0 */20 * * * *
+[CRON] Attempting to schedule job parlay-profit-generator (Parlay Profit Generator) with expr: 0 */20 * * * *
+[CRON] Attempting to schedule job bet-probability-aggregator (Bet Probability Aggregator) with expr: 0 */20 * * * *
+✅ Mission Control Cron Engine booted successfully. Active jobs: 29
+[STATUS] Failed to send agent status to gateway: Request failed with status code 404
+[SYS] Failed to read JSON at /Users/rizzolini/.openclaw/cron/jobs.json: SyntaxError: Unterminated string in JSON at position 196140 (line 1863 column 163)
+    at JSON.parse (<anonymous>)
+    at readJsonFile (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:99:17)
+    at loadCronData (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:531:28)
+    at updateCronJobRecord (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:549:16)
+    at recordCronStatus (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:559:3)
+    at executeCronJob (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:563:3)
+    at import_node_cron.default.schedule.timezone.timezone (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:624:54)
+    at Runner.onMatch (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/node_modules/node-cron/src/tasks/inline-scheduled-task.ts:70:14)
+    at Timeout._onTimeout (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/node_modules/node-cron/src/scheduler/runner.ts:100:41)
+    at listOnTimeout (node:internal/timers:605:17)
+[SYS] Failed to read JSON at /Users/rizzolini/.openclaw/cron/jobs.json: SyntaxError: Unterminated string in JSON at position 8186 (line 94 column 537)
+    at JSON.parse (<anonymous>)
+    at readJsonFile (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:99:17)
+    at loadCronData (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:531:28)
+    at updateCronJobRecord (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:549:16)
+    at recordCronStatus (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:559:3)
+    at executeCronJob (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:563:3)
+    at import_node_cron.default.schedule.timezone.timezone (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:624:54)
+    at Runner.onMatch (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/node_modules/node-cron/src/tasks/inline-scheduled-task.ts:70:14)
+    at Timeout._onTimeout (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/node_modules/node-cron/src/scheduler/runner.ts:100:41)
+    at listOnTimeout (node:internal/timers:605:17)
+[2026-04-20T04:00:01.006Z] [PID: 34444] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Apr 20 2026 00:00:00 GMT-0400 (Eastern Daylight Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-04-20T04:00:01.039Z] [PID: 34444] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Apr 20 2026 00:00:00 GMT-0400 (Eastern Daylight Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-04-20T04:00:01.080Z] [PID: 34444] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Apr 20 2026 00:00:00 GMT-0400 (Eastern Daylight Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-04-20T04:00:01.124Z] [PID: 34444] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Apr 20 2026 00:00:00 GMT-0400 (Eastern Daylight Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-04-20T04:00:01.148Z] [PID: 34444] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Apr 20 2026 00:00:00 GMT-0400 (Eastern Daylight Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[SYS] Failed to read JSON at /Users/rizzolini/.openclaw/cron/jobs.json: SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+    at readJsonFile (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:99:17)
+    at loadCronData (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:531:28)
+    at updateCronJobRecord (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:549:16)
+    at recordCronStatus (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:559:3)
+    at executeCronJob (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:563:3)
+    at import_node_cron.default.schedule.timezone.timezone (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:624:54)
+    at Runner.onMatch (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/node_modules/node-cron/src/tasks/inline-scheduled-task.ts:70:14)
+    at Timeout._onTimeout (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/node_modules/node-cron/src/scheduler/runner.ts:100:41)
+    at listOnTimeout (node:internal/timers:605:17)
+[SYS] Failed to read JSON at /Users/rizzolini/.openclaw/cron/jobs.json: SyntaxError: Unterminated string in JSON at position 73562 (line 687 column 504)
+    at JSON.parse (<anonymous>)
+    at readJsonFile (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:99:17)
+    at loadCronData (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:531:28)
+    at updateCronJobRecord (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:549:16)
+    at recordCronStatus (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:559:3)
+    at executeCronJob (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:563:3)
+    at import_node_cron.default.schedule.timezone.timezone (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:624:54)
+    at Runner.onMatch (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/node_modules/node-cron/src/tasks/inline-scheduled-task.ts:70:14)
+    at Timeout._onTimeout (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/node_modules/node-cron/src/scheduler/runner.ts:100:41)
+    at listOnTimeout (node:internal/timers:605:17)
+[SYS] Failed to read JSON at /Users/rizzolini/.openclaw/cron/jobs.json: SyntaxError: Unterminated string in JSON at position 49028 (line 487 column 160)
+    at JSON.parse (<anonymous>)
+    at readJsonFile (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:99:17)
+    at loadCronData (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:531:28)
+    at updateCronJobRecord (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:549:16)
+    at recordCronStatus (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:559:3)
+    at executeCronJob (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:563:3)
+    at import_node_cron.default.schedule.timezone.timezone (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:624:54)
+    at Runner.onMatch (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/node_modules/node-cron/src/tasks/inline-scheduled-task.ts:70:14)
+    at Timeout._onTimeout (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/node_modules/node-cron/src/scheduler/runner.ts:100:41)
+    at listOnTimeout (node:internal/timers:605:17)
+[2026-04-20T10:20:01.040Z] [PID: 34444] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Apr 20 2026 06:20:00 GMT-0400 (Eastern Daylight Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-04-20T10:20:01.092Z] [PID: 34444] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Apr 20 2026 06:20:00 GMT-0400 (Eastern Daylight Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-04-20T10:20:01.139Z] [PID: 34444] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Apr 20 2026 06:20:00 GMT-0400 (Eastern Daylight Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[SYS] Failed to read JSON at /Users/rizzolini/.openclaw/cron/jobs.json: SyntaxError: Unterminated string in JSON at position 212486 (line 2045 column 821)
+    at JSON.parse (<anonymous>)
+    at readJsonFile (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:99:17)
+    at loadCronData (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:531:28)
+    at updateCronJobRecord (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:549:16)
+    at recordCronStatus (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:559:3)
+    at executeCronJob (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:563:3)
+    at import_node_cron.default.schedule.timezone.timezone (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/index.ts:624:54)
+    at Runner.onMatch (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/node_modules/node-cron/src/tasks/inline-scheduled-task.ts:70:14)
+    at Timeout._onTimeout (/Users/rizzolini/Gemini/antigravity/scratch/Agent HQ/MissionControlHub/server/node_modules/node-cron/src/scheduler/runner.ts:100:41)
+    at listOnTimeout (node:internal/timers:605:17)
+6:31:55 AM [tsx] change in ./index.ts Restarting...
+c--- MISSION CONTROL SERVER STARTING - VERSION ABNJ01 ---
+◇ injecting env (9) from .env // tip: ⌘ override existing { override: true }
+Mission Control backend running on port 18788
+⚙️ Booting Mission Control Cron Engine...
+[CRON] Attempting to schedule job arbitrage-scanner (Arbitrage Scanner) with expr: 0 */15 6-16 * * 1-5
+[CRON] Attempting to schedule job shorts-bids-scanner (Short-Bids Scanner) with expr: 10 */5 9-16 * * 1-5
+[CRON] Attempting to schedule job long-bids-scanner (Long-Bids Scanner) with expr: 20 0 7-19 * * 1-5
+[CRON] Attempting to schedule job options-scanner (Options Trading Scanner) with expr: 30 0 9-16 * * 1-5
+[CRON] Attempting to schedule job suggested-sportsbets-scanner (Suggested Sportsbets Scanner) with expr: 40 */20 * * * *
+[CRON] Attempting to schedule job suggested-politics-scanner (Suggested Politics Scanner) with expr: 50 */20 * * * *
+[CRON] Attempting to schedule job suggested-stock-puts-scanner (Suggested Stock Puts Scanner) with expr: 0 */20 9-16 * * 1-5
+[CRON] Attempting to schedule job suggested-stock-calls-scanner (Suggested Stock Calls Scanner) with expr: 10 */20 9-16 * * 1-5
+[CRON] Attempting to schedule job trade-auditor (Trade Performance Auditor) with expr: 20 0 17 * * 1-5
+[CRON] Attempting to schedule job sentiment-monitor (Market Sentiment Monitor) with expr: 30 0 */2 * * *
+[CRON] Attempting to schedule job quick-flips-scanner (Quick Flips Scanner) with expr: 40 0 8,9,12,15 * * 1-5
+[CRON] Attempting to schedule job nyse-research (NYSE Deep-Research Analyst) with expr: 0 45 9,16 * * 1-5
+[CRON] Attempting to schedule job crypto-research (Cryptocurrency Research Analyst) with expr: 10 0 */4 * * *
+[CRON] Attempting to schedule job forex-research (Forex Research Analyst) with expr: 20 */30 * * * 1-5
+[CRON] Attempting to schedule job prediction-research (Prediction Market Research) with expr: 30 0 */4 * * *
+[CRON] Attempting to schedule job breaking-news (Breaking Finance News) with expr: 0 0 */4 * * *
+[CRON] Attempting to schedule job nyse-news (NYSE Breaking Intelligence) with expr: 20 0 */4 * * *
+[CRON] Attempting to schedule job forex-news (Forex Breaking Intelligence) with expr: 30 0 */4 * * *
+[CRON] Attempting to schedule job crypto-news (Crypto Breaking Intelligence) with expr: 40 0 */4 * * *
+[CRON] Attempting to schedule job prediction-news (Prediction Market Intelligence) with expr: 50 0 */4 * * *
+[CRON] Attempting to schedule job suggested-bets-scanner (Suggested Bets Scanner) with expr: 15 */20 * * * *
+[CRON] Attempting to schedule job suggested-predictions-scanner (Suggested Predictions Scanner) with expr: 30 */20 * * * *
+[CRON] Attempting to schedule job polymarket-sports-scanner (Polymarket Sports Tier) with expr: 40 */15 * * * *
+[CRON] Attempting to schedule job instagram-news-intel (Instagram News & Intel Scanner) with expr: 50 */30 * * * *
+[CRON] Attempting to schedule job player-points-scanner (Player Points Prop Scanner) with expr: 0 */20 * * * *
+[CRON] Attempting to schedule job player-assists-scanner (Player Assists Prop Scanner) with expr: 10 */20 * * * *
+[CRON] Attempting to schedule job player-steals-scanner (Player Steals Prop Scanner) with expr: 20 */20 * * * *
+[CRON] Attempting to schedule job player-blocks-scanner (Player Blocks Prop Scanner) with expr: 30 */20 * * * *
+[CRON] Attempting to schedule job parlay-profit-generator (Parlay Profit Generator) with expr: 40 */20 * * * *
+[CRON] Attempting to schedule job bet-probability-aggregator (Bet Probability Aggregator) with expr: 50 */20 * * * *
+[CRON] Attempting to schedule job nak3d-eye-internal-auditor-scanner (Nak3d Eye Internal Auditor Scanner) with expr: 12 */20 * * * *
+[CRON] Attempting to schedule job parlay-expert-scanner (Nak3d Eye Parlay Expert Scanner) with expr: 0 0 7,12,15,18 * * *
+[CRON] Attempting to schedule job unpopular-stock-scanner (Unpopular Stock Alpha Scanner) with expr: 32 0 */4 * * *
+✅ Mission Control Cron Engine booted successfully. Active jobs: 33
+[STATUS] Failed to send agent status to gateway: Request failed with status code 404

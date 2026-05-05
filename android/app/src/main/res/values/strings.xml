@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Mission Control</string>
+    <string name="title_activity_main">Mission Control</string>
+    <string name="package_name">com.nak3deye.missioncontrol</string>
+    <string name="custom_url_scheme">com.nak3deye.missioncontrol</string>
+</resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>com.missioncontrol.bridge</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>/usr/bin/python3</string>
+      <string>/absolute/path/to/missioncontrol/bridge/bridge.py</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/absolute/path/to/missioncontrol/bridge</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+      <key>BRIDGE_CONFIG</key>
+      <string>/absolute/path/to/missioncontrol/bridge/config.json</string>
+    </dict>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/tmp/missioncontrol-bridge.out</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/missioncontrol-bridge.err</string>
+  </dict>
+</plist>
