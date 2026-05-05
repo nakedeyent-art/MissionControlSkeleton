@@ -301,6 +301,9 @@ const Sidebar = ({ isOpen, toggleSidebar, handleLogout, localMode, toggleLocalMo
         <NavLink onClick={toggleSidebar} to="/workstation" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
           <Monitor size={20} /> Workstation Hub
         </NavLink>
+        <NavLink onClick={toggleSidebar} to="/storage" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+          <Database size={20} /> Storage Optimizer
+        </NavLink>
         <NavLink onClick={toggleSidebar} to="/roi" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
           <TrendingUp size={20} /> ROI Analytics
         </NavLink>
@@ -1010,6 +1013,80 @@ const WorkstationHubView = ({ toggleSidebar }: any) => {
          <p style={{ fontSize: '0.95rem', opacity: 0.7, maxWidth: 800, margin: '0 auto' }}>
            Mission Control acts as the central workstation for your entire AI fleet. By integrating IDE hooks directly into the Hub, you maintain a single point of truth for all builds, refactors, and scans across Antigravity, Cursor, and custom local agents.
          </p>
+      </div>
+    </PageTransition>
+  );
+};
+
+const StorageOptimizerView = ({ toggleSidebar }: any) => {
+  const [data, setData] = useState<any>(null);
+  const [cleaning, setCleaning] = useState<string | null>(null);
+
+  const fetchAnalysis = async () => {
+    try {
+      const res = await api.get('/api/storage/analysis');
+      setData(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => { fetchAnalysis(); }, []);
+
+  const runCleanup = async (id: string) => {
+    setCleaning(id);
+    try {
+      await api.post('/api/storage/cleanup', { id });
+      setTimeout(fetchAnalysis, 1000);
+    } finally {
+      setCleaning(null);
+    }
+  };
+
+  if (!data) return <div style={{ padding: 40, textAlign: 'center' }}>Analyzing Drive...</div>;
+
+  return (
+    <PageTransition toggleSidebar={toggleSidebar} title="Storage Optimizer" subtitle="Intelligent disk analysis to keep your computer lean and fast.">
+      <div className="glass-panel" style={{ marginBottom: 24, padding: 30 }}>
+         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
+            <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}><Database size={22} color="#facc15" /> Drive Health</h3>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{Math.round(data.disk.usePercent)}% Capacity Reached</span>
+         </div>
+         <div style={{ height: 10, background: 'rgba(255,255,255,0.05)', borderRadius: 5, overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: `${data.disk.usePercent}%`, background: 'linear-gradient(90deg, #4ade80, #facc15, #f43f5e)', transition: 'width 1s ease' }} />
+         </div>
+         <div style={{ display: 'flex', gap: 40, marginTop: 15, fontSize: '0.9rem' }}>
+            <div><strong style={{ color: 'var(--text-muted)' }}>Used:</strong> {(data.disk.used / 1e12).toFixed(2)} TB</div>
+            <div><strong style={{ color: 'var(--text-muted)' }}>Available:</strong> {(data.disk.available / 1e12).toFixed(2)} TB</div>
+         </div>
+      </div>
+
+      <div className="grid-2">
+         {data.suggestions.map((s: any) => (
+           <div key={s.id} className="glass-panel" style={{ display: 'flex', flexDirection: 'column' }}>
+             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                <div>
+                   <h4 style={{ margin: 0, color: 'white' }}>{s.type}</h4>
+                   <p style={{ fontSize: '0.8rem', color: s.impact === 'Extreme' ? '#f43f5e' : (s.impact === 'High' ? '#facc15' : '#38bdf8'), fontWeight: 'bold', textTransform: 'uppercase', marginTop: 4 }}>Impact: {s.impact}</p>
+                </div>
+                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '4px 10px', borderRadius: 4, fontSize: '0.9rem', fontWeight: 'bold', color: '#4ade80' }}>{s.size}</div>
+             </div>
+             <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', flex: 1 }}>{s.desc}</p>
+             <div style={{ fontSize: '0.75rem', fontFamily: 'monospace', background: 'rgba(0,0,0,0.3)', padding: 8, borderRadius: 4, marginBottom: 15, opacity: 0.6 }}>{s.path}</div>
+             <button 
+               disabled={!!cleaning}
+               onClick={() => runCleanup(s.id)}
+               className="secondary-btn" 
+               style={{ width: '100%', borderColor: s.impact === 'Extreme' ? '#f43f5e' : 'var(--panel-border)' }}
+             >
+               {cleaning === s.id ? 'Purging...' : 'Clean Now'}
+             </button>
+           </div>
+         ))}
+      </div>
+
+      <div className="glass-panel" style={{ marginTop: 24, textAlign: 'center', opacity: 0.7 }}>
+         <p style={{ fontSize: '0.85rem' }}><strong>Privacy Note:</strong> Mission Control scans metadata only. No document content is ever indexed or sent to external servers during drive analysis.</p>
       </div>
     </PageTransition>
   );
@@ -3424,6 +3501,7 @@ function App() {
                 <Route path="/security" element={<SecurityView toggleSidebar={toggleSidebar} />} />
                 <Route path="/fleet" element={<FleetHealthView toggleSidebar={toggleSidebar} />} />
                 <Route path="/workstation" element={<WorkstationHubView toggleSidebar={toggleSidebar} />} />
+                <Route path="/storage" element={<StorageOptimizerView toggleSidebar={toggleSidebar} />} />
                 <Route path="*" element={<Navigate to="/office" replace />} />
               </Routes>
             </AnimatePresence>
